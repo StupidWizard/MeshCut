@@ -121,7 +121,14 @@ public class MeshCut {
 			victim.transform.InverseTransformPoint(anchorPoint));
 
 		// get the victims mesh
-		victim_mesh = victim.GetComponent<MeshFilter>().mesh;
+		MeshFilter meshFilter = victim.GetComponent<MeshFilter>();
+		if (meshFilter != null) {
+			victim_mesh = meshFilter.mesh;
+		} else {
+			SkinnedMeshRenderer skinMeshRenderer = victim.GetComponent<SkinnedMeshRenderer>();
+			victim_mesh = skinMeshRenderer.sharedMesh;
+		}
+
 
 		meshUV = victim_mesh.uv;
 		meshVertices = victim_mesh.vertices;
@@ -173,7 +180,7 @@ public class MeshCut {
 		}
 
 
-		Material[] mats = victim.GetComponent<MeshRenderer>().sharedMaterials;
+		Material[] mats = victim.GetComponent<Renderer>().sharedMaterials;
 
 		if (mats[mats.Length-1].name != capMaterial.name) { // add cap indices
 
@@ -226,20 +233,32 @@ public class MeshCut {
 
 		// assign the game objects
 
-		victim.name = "left side";
-		victim.GetComponent<MeshFilter>().mesh = left_HalfMesh;
+//		victim.name = "left side";
+//		if (meshFilter != null) {
+//			victim.GetComponent<MeshFilter>().mesh = left_HalfMesh;
+//		} else {
+//			victim.GetComponent<SkinnedMeshRenderer>().sharedMesh = left_HalfMesh;
+//		}
+//		GameObject leftSideObj = victim;
 
-		GameObject leftSideObj = victim;
+		GameObject leftSideObj = new GameObject("left side", typeof(MeshFilter), typeof(MeshRenderer));
+		leftSideObj.transform.position = victim.transform.position;
+		leftSideObj.transform.rotation = victim.transform.rotation;
+		leftSideObj.GetComponent<MeshFilter>().mesh = left_HalfMesh;
+		leftSideObj.transform.localScale = victim.transform.lossyScale;
 
 		GameObject rightSideObj = new GameObject("right side", typeof(MeshFilter), typeof(MeshRenderer));
 		rightSideObj.transform.position = victim.transform.position;
 		rightSideObj.transform.rotation = victim.transform.rotation;
 		rightSideObj.GetComponent<MeshFilter>().mesh = right_HalfMesh;
+		rightSideObj.transform.localScale = victim.transform.lossyScale;
 
 
 		// assign mats
 		leftSideObj.GetComponent<MeshRenderer>().materials = mats;
 		rightSideObj.GetComponent<MeshRenderer>().materials = mats;
+
+		victim.gameObject.SetActive(false);
 
 		stopWatch.Stop();
 
