@@ -19,12 +19,15 @@ public class ToolUser : MonoBehaviour {
 
 				GameObject victim = hit.collider.gameObject;
 
+				Debug.LogError("Start cut at " + Time.realtimeSinceStartup);
 				GameObject[] pieces = MeshCut.Cut(victim, transform.position, transform.right, capMaterial);
 
 				if(!pieces[1].GetComponent<Rigidbody>())
 					pieces[1].AddComponent<Rigidbody>();
 
 				Destroy(pieces[1], 1);
+
+				Debug.LogError("Finish cut at " + Time.realtimeSinceStartup);
 			}
 		}
 	}
