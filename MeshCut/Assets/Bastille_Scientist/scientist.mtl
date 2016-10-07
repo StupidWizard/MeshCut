@@ -1,0 +1,27 @@
+# Blender MTL File: 'scientist.blend'
+# Material Count: 2
+
+newmtl Material__178
+Ns 7.843137
+Ka 0.000000 0.000000 0.000000
+Kd 0.470400 0.470400 0.470400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd CH_Cm_CIT_Scientific_Body_D.tga
+map_Ks CH_Cm_CIT_Scientific_Body_S.tga
+map_Disp CH_Cm_CIT_Scientific_Body_N.tga
+map_Ke CH_Cm_CIT_Scientific_Body_M.tga
+
+newmtl Material__97
+Ns 7.843137
+Ka 0.000000 0.000000 0.000000
+Kd 0.470400 0.470400 0.470400
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd CH_Cm_CIT_Scientific_Head_D.tga
+map_Disp CH_Cm_CIT_Scientific_Head_N.tga
+map_Ke CH_Cm_CIT_Scientific_Head_RGB.tga
