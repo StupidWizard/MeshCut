@@ -241,17 +241,32 @@ public class MeshCut {
 //		}
 //		GameObject leftSideObj = victim;
 
-		GameObject leftSideObj = new GameObject("left side", typeof(MeshFilter), typeof(MeshRenderer));
+		GameObject leftSideObj = new GameObject(victim.name + "_Left", typeof(MeshFilter), typeof(MeshRenderer));
+		var leftMeshCollider = leftSideObj.AddComponent(typeof(MeshCollider)) as MeshCollider;
+
 		leftSideObj.transform.position = victim.transform.position;
 		leftSideObj.transform.rotation = victim.transform.rotation;
 		leftSideObj.GetComponent<MeshFilter>().mesh = left_HalfMesh;
 		leftSideObj.transform.localScale = victim.transform.lossyScale;
+		leftMeshCollider.sharedMesh = left_HalfMesh;
+		try {
+			leftMeshCollider.convex = true;
+		} catch {
+		}
 
-		GameObject rightSideObj = new GameObject("right side", typeof(MeshFilter), typeof(MeshRenderer));
+
+		GameObject rightSideObj = new GameObject(victim.name + "_Right", typeof(MeshFilter), typeof(MeshRenderer));
+		var rightMeshCollider = rightSideObj.AddComponent(typeof(MeshCollider)) as MeshCollider;
+
 		rightSideObj.transform.position = victim.transform.position;
 		rightSideObj.transform.rotation = victim.transform.rotation;
 		rightSideObj.GetComponent<MeshFilter>().mesh = right_HalfMesh;
 		rightSideObj.transform.localScale = victim.transform.lossyScale;
+		rightMeshCollider.sharedMesh = right_HalfMesh;
+		try {
+			rightMeshCollider.convex = true;
+		} catch {
+		}
 
 
 		// assign mats
