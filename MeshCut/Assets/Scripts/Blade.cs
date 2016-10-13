@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public class Blade : MonoBehaviour {
 
+	public Transform[] eyes;
+
 	public Material capMaterial;
 
 	public List<GameObject> listTarget = new List<GameObject>();
@@ -50,18 +52,34 @@ public class Blade : MonoBehaviour {
 	}
 
 	void FindTarget () {
-		RaycastHit hit;
+//		RaycastHit hit;
 
-		for (float y = -1; y <= 1; y += 0.2f) {
+		for (float y = -1; y <= 1; y += 0.1f) {
 			Vector3 direct = transform.TransformDirection(new Vector3(0, y, 1));
-			if (Physics.Raycast(transform.position, direct, out hit)) {
-				GameObject victim = hit.collider.gameObject;
-				AddTarget(victim);
+//			if (Physics.Raycast(transform.position, direct, out hit)) {
+//				GameObject victim = hit.collider.gameObject;
+//				AddTarget(victim);
+//			}
+			foreach (Transform eye in eyes) {
+				RaycastHit[] listHit = Physics.RaycastAll(eye.position, direct);
+				if (listHit != null && listHit.Length > 0) {
+					foreach (RaycastHit hitInfo in listHit) {
+						GameObject victim = hitInfo.collider.gameObject;
+						AddTarget(victim);
+					}
+				}
 			}
 		}
 	}
 
 	void AddTarget(GameObject pTarget) {
+		JointPlane jointPlane = pTarget.GetComponent<JointPlane>();
+		if (jointPlane != null) {
+			jointPlane.beCut = true;
+
+			return;
+		}
+
 		bool isPart = CheckPart(pTarget.transform);
 		if (!isPart) {
 			return;
