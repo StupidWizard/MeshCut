@@ -3,18 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-[Serializable]
-public class CutGroup {
-	public GameObject origin;
-	public GameObject left;			// true vs plane
-	public GameObject right;		// false vs plane
-}
+//[Serializable]
+//public class CutGroup {
+//	public GameObject origin;
+//	public GameObject left;			// true vs plane
+//	public GameObject right;		// false vs plane
+//}
 
 public class JointCutBody : MonoBehaviour {
 
 	public JointElement[] listJointElement;
 
-	public List<CutGroup> listCutGroup = new List<CutGroup>();
+	public List<JointElement> listCutGroup = new List<JointElement>();
 
 	public Plane blade;
 
@@ -46,72 +46,59 @@ public class JointCutBody : MonoBehaviour {
 	}
 
 	public void AddCutGroup(GameObject origin, GameObject left, GameObject right) {
-		var cutGroup = new CutGroup();
-		cutGroup.origin = origin;
-		cutGroup.left = left;
-		cutGroup.right = right;
-		listCutGroup.Add(cutGroup);
+		foreach (JointElement element in listJointElement) {
+			if (element.mCollider.gameObject == origin) {
+				element.CutToParts(left, right);
+				listCutGroup.Add(element);
+				return;
+			}
+		}
 	}
 
 	public void ProcessAfterCut() {
 		Debug.LogError("Start Process: update main body and joint for all cutGroup");
-		foreach (CutGroup cutGroup in listCutGroup) {
-			JointElement jointElement = cutGroup.origin.transform.parent.gameObject.GetComponent<JointElement>();
-			if (jointElement != null) {
-				UpdateJointNode(cutGroup, jointElement);
+		foreach (JointElement jointElement in listJointElement) {
+			if (!jointElement.beCut) {
+				jointElement.CheckSide(blade);
 			}
 		}
 
 		Debug.LogError("During Process: update target and co-target for cutGroup");
-		foreach (CutGroup cutGroup in listCutGroup) {
-			JointElement jointElement = cutGroup.origin.transform.parent.gameObject.GetComponent<JointElement>();
-			if (jointElement != null) {
-				ProcessJointNode(cutGroup, jointElement);
-			}
+		foreach (JointElement jointElement in listCutGroup) {
+			ProcessJointNode(jointElement);
 		}
 
 		Debug.LogError("End Process: remove unuse body");
-		foreach (CutGroup cutGroup in listCutGroup) {
-			JointElement jointElement = cutGroup.origin.transform.parent.gameObject.GetComponent<JointElement>();
-			if (jointElement != null) {
-				jointElement.ClearOldObject();
-			}
+		foreach (JointElement jointElement in listCutGroup) {
+			jointElement.ClearOldObject();
 		}
 	}
 
-	void UpdateJointNode(CutGroup cutGroup, JointElement jointElement) {
-		bool isLeft = blade.GetSide(jointElement.transform.position);
-		GameObject replace = isLeft? cutGroup.left : cutGroup.right;
-		jointElement.UpdateData(replace.GetComponent<Rigidbody>());
-//		jointElement.UpdateData(cutGroup.left.GetComponent<Rigidbody>(), cutGroup.right.GetComponent<Rigidbody>());
-	}
-
-	void ProcessJointNode(CutGroup cutGroup, JointElement jointElement) {
-		// check side
-
+	void ProcessJointNode(JointElement jointElement) {
+		// vs parent
 		if (jointElement.mJoint != null) {
-			// TODO - body is new body
 			Rigidbody targetBody = jointElement.mJoint.connectedBody;
 
 			if (targetBody != null) {
 				JointElement targetElement = targetBody.gameObject.GetComponent<JointElement>();
-				if (targetElement != null) {
-					Debug.LogError(jointElement.mJoint.name + " Update joint vs " + targetElement.mNewBody.name);
-					jointElement.mJoint.connectedBody = targetElement.mNewBody;
+				if (targetElement != null && targetElement.beCut) {
+					// this process must be called when check targetElement. So do not process here
+				} else {
+					// joint as normal body -> check side and set
+					bool onLeftSide = blade.GetSide(targetBody.transform.position);
+					jointElement.JointWithParent(targetBody, onLeftSide);
 				}
 			}
-
 		}
 
 
+		// vs child
 		foreach (JointElement otherElement in listJointElement) {
 			if (otherElement != jointElement) {
 				if (otherElement.mJoint != null && otherElement.mJoint.connectedBody != null) {
 					if (otherElement.mJoint.connectedBody.transform == jointElement.transform) {
-						// set new target for other
-						bool isOtherLeft = blade.GetSide(otherElement.transform.position);
-						GameObject targetOfOther = isOtherLeft? cutGroup.left : cutGroup.right;
-						otherElement.mJoint.connectedBody = targetOfOther.GetComponent<Rigidbody>();
+						otherElement.JointWithParent(jointElement.mLeftBody, jointElement.mRightBody);
+						// set new parent for other
 //						otherElement.mJoint.transform.SetParent(targetOfOther.transform);
 					}
 				}
