@@ -20,7 +20,7 @@ public class Blade : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Cut() {
+	public void Cut() {
 		FindTarget();
 
 		if (listTarget.Count == 0) {
@@ -121,9 +121,5 @@ public class Blade : MonoBehaviour {
 
 	}
 
-	void OnGUI() {
-		if (GUI.Button(new Rect(10, 10, Screen.width/6, Screen.height/8), "Cut")) {
-			Cut();
-		}
-	}
+
 }

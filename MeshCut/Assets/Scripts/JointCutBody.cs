@@ -24,7 +24,7 @@ public class JointCutBody : MonoBehaviour {
 	}
 
 	void Init() {
-		listJointElement = gameObject.GetComponentsInChildren<JointElement>();
+		listJointElement = gameObject.GetComponentsInChildren<JointElement>(true);
 		foreach (JointElement joint in listJointElement) {
 			joint.GetComponent<Rigidbody>().isKinematic = true;
 		}
