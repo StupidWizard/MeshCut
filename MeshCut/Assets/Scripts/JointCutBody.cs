@@ -58,9 +58,10 @@ public class JointCutBody : MonoBehaviour {
 	public void ProcessAfterCut() {
 		Debug.LogError("Start Process: update main body and joint for all cutGroup");
 		foreach (JointElement jointElement in listJointElement) {
-			if (!jointElement.beCut) {
-				jointElement.CheckSide(blade);
-			}
+			jointElement.CheckSide(blade);
+//			if (!jointElement.beCut) {
+//				jointElement.CheckSide(blade);
+//			}
 		}
 
 		Debug.LogError("During Process: update target and co-target for cutGroup");

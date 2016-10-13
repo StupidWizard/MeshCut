@@ -3,6 +3,7 @@ using System.Collections;
 
 public class JointElement : MonoBehaviour {
 	public Collider mCollider;		// hard set: the body which can be cut to left Part and right Part.
+	public JointPlane mJointPlane;	// hard set: check the plane of Joint be cut or not. (if cut -> joint both of left and right part)
 
 	Rigidbody mBody;				// Rigidbody of object
 	public CharacterJoint mJoint;	// joint of object
@@ -102,23 +103,26 @@ public class JointElement : MonoBehaviour {
 			// joint L_part vs L_partOfParent and R_part vs R_partOfParent
 
 			// LEFT
-			mLeftJoint = mLeftBody.gameObject.GetComponent<CharacterJoint>();
-			if (mLeftJoint == null) {
-				mLeftJoint = mLeftBody.gameObject.AddComponent<CharacterJoint>();
+			if (mJointPlane.beCut || onLeftSide) {
+				mLeftJoint = mLeftBody.gameObject.GetComponent<CharacterJoint>();
+				if (mLeftJoint == null) {
+					mLeftJoint = mLeftBody.gameObject.AddComponent<CharacterJoint>();
+				}
+				mLeftJoint.connectedBody = leftPartOfParent;
+				mLeftJoint.anchor = mJoint.anchor;
+				mLeftJoint.axis = mJoint.axis;
 			}
-			mLeftJoint.connectedBody = leftPartOfParent;
-			mLeftJoint.anchor = mJoint.anchor;
-			mLeftJoint.axis = mJoint.axis;
-
 
 			// RIGHT
-			mRightJoint = mRightBody.gameObject.GetComponent<CharacterJoint>();
-			if (mRightJoint == null) {
-				mRightJoint = mRightBody.gameObject.AddComponent<CharacterJoint>();
+			if (mJointPlane.beCut || !onLeftSide) {
+				mRightJoint = mRightBody.gameObject.GetComponent<CharacterJoint>();
+				if (mRightJoint == null) {
+					mRightJoint = mRightBody.gameObject.AddComponent<CharacterJoint>();
+				}
+				mRightJoint.connectedBody = rightPartOfParent;
+				mRightJoint.anchor = mJoint.anchor;
+				mRightJoint.axis = mJoint.axis;
 			}
-			mRightJoint.connectedBody = rightPartOfParent;
-			mRightJoint.anchor = mJoint.anchor;
-			mRightJoint.axis = mJoint.axis;
 		} else {
 			// if onLeftSide -> joint vs L_partOfParent and else.
 			mJoint.connectedBody = onLeftSide? leftPartOfParent : rightPartOfParent;
