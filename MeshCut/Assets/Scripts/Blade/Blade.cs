@@ -19,17 +19,36 @@ public class Blade : MonoBehaviour {
 	
 	}
 	
-	// Update is called once per frame
+	// Default Cut
 	public void Cut() {
 		FindTarget();
 
+		DoCut ();
+	}
+
+
+	public Transform fakeOrigin;
+	public Transform fakeStart;
+	public Transform fakeEnd;
+
+	[ContextMenu("Fake RotateCut")]
+	void FakeRotateCut() {
+		Cut (fakeOrigin.position, fakeStart.position, fakeEnd.position);
+	}
+
+	public void Cut(Vector3 originPos, Vector3 vertexStart, Vector3 vertexEnd) {
+		transform.parent.position = originPos;
+		transform.parent.LookAt (0.5f * (vertexStart + vertexEnd));
+	}
+
+	void DoCut() {
 		if (listTarget.Count == 0) {
 			Debug.LogError("Fail!");
 			return;
 		}
 
 		targetRoot.ActivePhysics();
-//		Debug.LogError("Start cut at " + Time.realtimeSinceStartup);
+		//		Debug.LogError("Start cut at " + Time.realtimeSinceStartup);
 
 		foreach (GameObject victim in listTarget) {
 			GameObject[] pieces = MeshCut.Cut(victim, transform.position, transform.right, capMaterial);
@@ -43,7 +62,7 @@ public class Blade : MonoBehaviour {
 		}
 
 
-//		Debug.LogError("Finish cut at " + Time.realtimeSinceStartup);
+		//		Debug.LogError("Finish cut at " + Time.realtimeSinceStartup);
 		Plane testBlade = new Plane(transform.TransformPoint(Vector3.zero), 
 			transform.TransformPoint(Vector3.forward),
 			transform.TransformPoint(Vector3.up));

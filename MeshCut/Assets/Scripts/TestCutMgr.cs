@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class TestCutMgr : MonoBehaviour {
 
@@ -9,6 +10,9 @@ public class TestCutMgr : MonoBehaviour {
 	public GameObject boneObject;
 	public GameObject meshObject;
 	public GameObject cutObject;
+
+	public static bool onDoubleTouch = false;
+	public float timeRemainDecideRestart = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -20,9 +24,42 @@ public class TestCutMgr : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.K)) {
 			ChangeToCutMode();
 		}
+
+		CheckReset ();
+	}
+
+	void CheckReset() {
+		if (timeRemainDecideRestart > 0) {
+			timeRemainDecideRestart -= Time.deltaTime;
+		}
+
+		if (HandInputManager.Instance.leftHand.onPressTrigger && HandInputManager.Instance.rightHand.onPressTrigger) {
+			RoomController.Instance.ResetPosition ();
+			if (!onDoubleTouch) {
+				timeRemainDecideRestart = 1.5f;
+			}
+		}
+
+		if (onDoubleTouch) {
+			if (!HandInputManager.Instance.leftHand.onPressTouchPad || !HandInputManager.Instance.rightHand.onPressTouchPad) {
+				onDoubleTouch = false;
+			}
+		} else {
+			if (HandInputManager.Instance.leftHand.onPressTouchPad && HandInputManager.Instance.rightHand.onPressTouchPad) {
+				onDoubleTouch = true;
+				if (timeRemainDecideRestart > 0) {
+					SceneManager.LoadScene ("MeshCut");
+				}
+			}
+		}
+
 	}
 		
+	public bool cutFinished = false;
 	void ChangeToCutMode() {
+		if (cutFinished) {
+			return;
+		}
 		meshObject.SetActive(false);
 		cutObject.SetActive(true);
 		Transform[] listBone = boneObject.GetComponentsInChildren<Transform>();
@@ -41,7 +78,7 @@ public class TestCutMgr : MonoBehaviour {
 			}
 		}
 		boneObject.SetActive(false);
-
+		cutFinished = true;
 		StartCoroutine(Cut());
 	}
 
@@ -50,9 +87,9 @@ public class TestCutMgr : MonoBehaviour {
 		blade.Cut();
 	}
 
-	void OnGUI() {
-		if (GUI.Button(new Rect(10, 10, Screen.width/6, Screen.height/8), "Cut")) {
-			ChangeToCutMode();
-		}
-	}
+//	void OnGUI() {
+//		if (GUI.Button(new Rect(10, 10, Screen.width/6, Screen.height/8), "Cut")) {
+//			ChangeToCutMode();
+//		}
+//	}
 }
