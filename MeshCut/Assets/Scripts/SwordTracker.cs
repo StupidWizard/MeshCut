@@ -9,8 +9,11 @@ public class SwordTracker : MonoBehaviour {
 	[SerializeField]
 	Transform vertex;		// Distance of (Vertex, origin) Must be 1.0f
 
-	[SerializeField]
+	public Vector3 startOrigin;
+	public Vector3 startVertex;
 
+	public Vector3 endOrigin;
+	public Vector3 endVertex;
 
 	// Use this for initialization
 	void Start () {
@@ -22,5 +25,23 @@ public class SwordTracker : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public void StartTracker() {
+		startOrigin = origin.position;
+		startVertex = vertex.position;
+	}
+
+	public void StopTracker() {
+		endOrigin = origin.position;
+		endVertex = vertex.position;
+	}
+
+	public Vector3[] GetTrackerData() {
+		return new Vector3[] {
+			0.5f * (startOrigin + endOrigin),
+			startVertex,
+			endVertex
+		};
 	}
 }

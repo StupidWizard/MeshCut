@@ -11,45 +11,57 @@ public class TestCutMgr : MonoBehaviour {
 	public GameObject meshObject;
 	public GameObject cutObject;
 
-	public static bool onDoubleTouch = false;
-	public float timeRemainDecideRestart = 0.0f;
+	public SwordTracker swordTracker;
+
+	float timeStart = 1.0f;
 
 	// Use this for initialization
 	void Start () {
 	
 	}
+
+	public bool onTrigger = false;
 	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.K)) {
 			ChangeToCutMode();
+			StartCoroutine (Cut(null));
 		}
+
+		if (timeStart > 0) {
+			timeStart -= Time.deltaTime;
+		} else {
+			CheckCut ();
+		}
+
+
 
 		CheckReset ();
 	}
 
-	void CheckReset() {
-		if (timeRemainDecideRestart > 0) {
-			timeRemainDecideRestart -= Time.deltaTime;
-		}
-
-		if (HandInputManager.Instance.leftHand.onPressTrigger && HandInputManager.Instance.rightHand.onPressTrigger) {
-			RoomController.Instance.ResetPosition ();
-			if (!onDoubleTouch) {
-				timeRemainDecideRestart = 1.5f;
-			}
-		}
-
-		if (onDoubleTouch) {
-			if (!HandInputManager.Instance.leftHand.onPressTouchPad || !HandInputManager.Instance.rightHand.onPressTouchPad) {
-				onDoubleTouch = false;
+	void CheckCut() {
+		if (onTrigger) {
+			if (!HandInputManager.Instance.rightHand.onPressTrigger) {
+				onTrigger = false;
+				swordTracker.StopTracker ();
+				ChangeToCutMode ();
+				StartCoroutine(Cut(swordTracker.GetTrackerData ()));
 			}
 		} else {
+			if (HandInputManager.Instance.rightHand.onPressTrigger) {
+				onTrigger = true;
+				swordTracker.StartTracker ();
+			}
+		}
+	}
+
+	void CheckReset() {
+		if (HandInputManager.Instance.leftHand.onPressTouchPad && HandInputManager.Instance.rightHand.onPressTouchPad) {
+			RoomController.Instance.ResetPosition ();
+
 			if (HandInputManager.Instance.leftHand.onPressTouchPad && HandInputManager.Instance.rightHand.onPressTouchPad) {
-				onDoubleTouch = true;
-				if (timeRemainDecideRestart > 0) {
-					SceneManager.LoadScene ("MeshCut");
-				}
+				SceneManager.LoadScene ("MeshCut");
 			}
 		}
 
@@ -79,12 +91,17 @@ public class TestCutMgr : MonoBehaviour {
 		}
 		boneObject.SetActive(false);
 		cutFinished = true;
-		StartCoroutine(Cut());
+
 	}
 
-	IEnumerator Cut() {
+	IEnumerator Cut(Vector3[] dataTracker) {
 		yield return new WaitForEndOfFrame();
-		blade.Cut();
+		if (dataTracker != null) {
+			blade.Cut (dataTracker [0], dataTracker [1], dataTracker [2]);
+		} else {
+			blade.Cut ();
+		}
+
 	}
 
 //	void OnGUI() {
