@@ -38,7 +38,22 @@ public class Blade : MonoBehaviour {
 
 	public void Cut(Vector3 originPos, Vector3 vertexStart, Vector3 vertexEnd) {
 		transform.parent.position = originPos;
+		vertexEnd = originPos + (vertexEnd - originPos).normalized * (vertexStart - originPos).magnitude;
 		transform.parent.LookAt (0.5f * (vertexStart + vertexEnd));
+
+		Vector3 localStart = transform.parent.InverseTransformPoint (vertexStart).normalized;
+		Vector3 localEnd = transform.parent.InverseTransformPoint (vertexEnd).normalized;
+
+
+		Vector3 horizontalDirect = localEnd - localStart;
+		Debug.LogError ("horizontal Direct = " + horizontalDirect + " localStart " + localStart + " localEnd " + localEnd);
+		if (horizontalDirect.magnitude > 0) {
+			horizontalDirect.Normalize ();
+			float angle = Mathf.Rad2Deg * Mathf.Asin (horizontalDirect.x);		// default: transform plane is rotate 90degree -> sin = x; cos = y
+			transform.localRotation = Quaternion.Euler(0, 0, angle);
+		}
+
+		Cut ();
 	}
 
 	void DoCut() {
@@ -73,7 +88,7 @@ public class Blade : MonoBehaviour {
 	void FindTarget () {
 //		RaycastHit hit;
 
-		for (float y = -1; y <= 1; y += 0.1f) {
+		for (float y = -10; y <= 10; y += 0.1f) {
 			Vector3 direct = transform.TransformDirection(new Vector3(0, y, 1));
 //			if (Physics.Raycast(transform.position, direct, out hit)) {
 //				GameObject victim = hit.collider.gameObject;
