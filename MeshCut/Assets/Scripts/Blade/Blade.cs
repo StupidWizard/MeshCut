@@ -29,7 +29,7 @@ public class Blade : MonoBehaviour {
 		}
 
 		targetRoot.ActivePhysics();
-		Debug.LogError("Start cut at " + Time.realtimeSinceStartup);
+//		Debug.LogError("Start cut at " + Time.realtimeSinceStartup);
 
 		foreach (GameObject victim in listTarget) {
 			GameObject[] pieces = MeshCut.Cut(victim, transform.position, transform.right, capMaterial);
@@ -43,7 +43,7 @@ public class Blade : MonoBehaviour {
 		}
 
 
-		Debug.LogError("Finish cut at " + Time.realtimeSinceStartup);
+//		Debug.LogError("Finish cut at " + Time.realtimeSinceStartup);
 		Plane testBlade = new Plane(transform.TransformPoint(Vector3.zero), 
 			transform.TransformPoint(Vector3.forward),
 			transform.TransformPoint(Vector3.up));

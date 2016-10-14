@@ -17,7 +17,9 @@ public class TestCutMgr : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Input.GetKeyDown (KeyCode.K)) {
+			ChangeToCutMode();
+		}
 	}
 		
 	void ChangeToCutMode() {
@@ -51,7 +53,6 @@ public class TestCutMgr : MonoBehaviour {
 	void OnGUI() {
 		if (GUI.Button(new Rect(10, 10, Screen.width/6, Screen.height/8), "Cut")) {
 			ChangeToCutMode();
-//			blade.Cut();
 		}
 	}
 }

@@ -56,20 +56,17 @@ public class JointCutBody : MonoBehaviour {
 	}
 
 	public void ProcessAfterCut() {
-		Debug.LogError("Start Process: update main body and joint for all cutGroup");
+//		Debug.LogError("Start Process: update main body and joint for all cutGroup");
 		foreach (JointElement jointElement in listJointElement) {
 			jointElement.CheckSide(blade);
-//			if (!jointElement.beCut) {
-//				jointElement.CheckSide(blade);
-//			}
 		}
 
-		Debug.LogError("During Process: update target and co-target for cutGroup");
+//		Debug.LogError("During Process: update target and co-target for cutGroup");
 		foreach (JointElement jointElement in listCutGroup) {
 			ProcessJointNode(jointElement);
 		}
 
-		Debug.LogError("End Process: remove unuse body");
+//		Debug.LogError("End Process: remove unuse body");
 		foreach (JointElement jointElement in listCutGroup) {
 			jointElement.ClearOldObject();
 		}
