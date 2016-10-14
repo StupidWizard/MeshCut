@@ -41,6 +41,7 @@ public class TestCutMgr : MonoBehaviour {
 	}
 
 	void CheckCut() {
+		return;
 		if (onTrigger) {
 			if (!HandInputManager.Instance.rightHand.onPressTrigger) {
 				onTrigger = false;
@@ -57,6 +58,7 @@ public class TestCutMgr : MonoBehaviour {
 	}
 
 	void CheckReset() {
+		return;
 		if (HandInputManager.Instance.leftHand.onPressTouchPad && HandInputManager.Instance.rightHand.onPressTouchPad) {
 			RoomController.Instance.ResetPosition ();
 
