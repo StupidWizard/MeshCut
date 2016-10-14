@@ -142,6 +142,7 @@ GameObject:
   - 4: {fileID: 4000011698842486}
   - 33: {fileID: 33000010843274450}
   - 23: {fileID: 23000010647673730}
+  - 114: {fileID: 114000013331340190}
   m_Layer: 0
   m_Name: free_sword
   m_TagString: Untagged
@@ -601,6 +602,23 @@ MonoBehaviour:
   index: 0
   origin: {fileID: 0}
   isValid: 0
+--- !u!114 &114000013331340190
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013600312044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06dc20647f3769f42bfbbeab6db08aef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  origin: {fileID: 4000013240544854}
+  vertex: {fileID: 4000011344484808}
+  startOrigin: {x: 0, y: 0, z: 0}
+  startVertex: {x: 0, y: 0, z: 0}
+  endOrigin: {x: 0, y: 0, z: 0}
+  endVertex: {x: 0, y: 0, z: 0}
 --- !u!114 &114000013496129772
 MonoBehaviour:
   m_ObjectHideFlags: 1
